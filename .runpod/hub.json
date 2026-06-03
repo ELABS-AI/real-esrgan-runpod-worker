@@ -1,26 +1,30 @@
 {
-  "name": "elabs / Real-ESRGAN Upscale",
   "description": "Real-ESRGAN upscaling with multiple scale factors (2x-4x). Supports image and video frames, face enhancement, tile-based processing for large images. API: POST JSON with {image_base64, scale, face_enhance, tile_size} -> {image_base64, scale, original_size, wall_time_s}. GPU: requires >=4GB VRAM (RTX 4090, L40S, A5000+).",
   "type": "serverless",
   "task": "upscale",
   "category": "image",
-
   "config": {
     "runsOn": "GPU",
     "containerDiskInGb": 25,
     "gpuCount": 1,
     "gpuIds": "ADA_24,ADA_48,AMPERE_48",
     "allowedCudaVersions": [
-      "12.8", "12.7", "12.6", "12.5", "12.4", "12.3", "12.2", "12.1", "12.0"
+      "12.8",
+      "12.7",
+      "12.6",
+      "12.5",
+      "12.4",
+      "12.3",
+      "12.2",
+      "12.1",
+      "12.0"
     ],
-
     "env": [
       {
         "key": "PYTORCH_CUDA_ALLOC_CONF",
         "value": "expandable_segments:True"
       }
     ],
-
     "presets": [
       {
         "name": "2x Upscale + Face Enhance",
@@ -37,5 +41,7 @@
         }
       }
     ]
-  }
+  },
+  "title": "elabs / Real-ESRGAN Upscale",
+  "iconUrl": "https://pub-796a08821c1c483aaf5e274e0d03e350.r2.dev/studio-jobs/real-esrgan/demo-1.png"
 }
