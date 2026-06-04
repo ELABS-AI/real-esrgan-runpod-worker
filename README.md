@@ -1,16 +1,29 @@
 # elabs / Real-ESRGAN Upscale
 
-[![Run on RunPod](https://runpod.io/badge/runpod-hub)](https://runpod.io/console/hub)
+[![Deploy on RunPod](https://img.shields.io/badge/RunPod-Deploy-orange?logo=runpod)](https://console.runpod.io/hub)
+[![CUDA 12.4](https://img.shields.io/badge/CUDA-12.4-green)](https://developer.nvidia.com/cuda-toolkit)
+[![BSD-3](https://img.shields.io/badge/License-BSD%203--Clause-blue)](https://opensource.org/licenses/BSD-3-Clause)
 
-**Real-ESRGAN** upscaling with multiple scale factors (2x–4x). Supports image and video frames, face enhancement (GFPGAN), and tile-based processing for large images. Runs on any GPU with ≥4GB VRAM.
+**AI-powered image upscaling** using Real-ESRGAN. Upscale images 2x-4x with optional face enhancement (GFPGAN). Tile-based processing handles images of any size.
+
+![Real-ESRGAN Upscale](https://pub-796a08821c1c483aaf5e274e0d03e350.r2.dev/hub-icons/real-esrgan.svg)
 
 ## Highlights
 
-- **2x–4x upscaling** — high-quality, real-world image super-resolution
-- **Face enhancement** — integrated GFPGAN for realistic face restoration
-- **Tile-based processing** — handles large images without OOM errors
-- **Automatic OOM recovery** — falls back to smaller tile sizes on out-of-memory
-- **GPU efficient** — fp16 inference, runs on RTX 4090, L40S, A5000+
+- 2x-4x upscaling -- crisp, detail-preserving enhancement
+- Face enhancement -- optional GFPGAN face restoration
+- Tile processing -- handles large images (4K+) without OOM
+- Multiple models -- General, Anime, Photo variants
+- Fast -- ~1-3s per 512x512 tile on RTX 4090
+
+## Quick Start
+
+```bash
+curl -X POST https://api.runpod.ai/v2/{ENDPOINT_ID}/run \
+  -H "Authorization: Bearer $RUNPOD_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"input": {"image_base64": "<base64 PNG>", "scale": 4, "face_enhance": false}}'
+```
 
 ## API
 
@@ -19,10 +32,11 @@
 ```json
 {
   "input": {
-    "image_base64": "<base64-encoded JPEG/PNG/WEBP bytes>",
+    "image_base64": "<base64 PNG or JPG>",
     "scale": 4,
     "face_enhance": false,
-    "tile_size": 512
+    "tile_size": 512,
+    "model": "general"
   }
 }
 ```
@@ -31,10 +45,10 @@
 
 ```json
 {
-  "image_b64": "<base64-encoded PNG>",
+  "image_base64": "<base64 upscaled PNG>",
   "scale": 4,
-  "original_size": [1920, 1080],
-  "output_size": [7680, 4320],
+  "original_size": [640, 480],
+  "output_size": [2560, 1920],
   "wall_time_s": 2.1
 }
 ```
@@ -43,27 +57,18 @@
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `image_base64` | string | **required** | Base64-encoded image bytes (JPEG, PNG, WEBP) |
-| `scale` | int | `4` | Upscale factor (1, 2, 3, 4) |
+| `image_base64` | string | required | Base64 PNG/JPG to upscale |
+| `scale` | int | `4` | Upscale factor: 2 or 4 |
 | `face_enhance` | bool | `false` | Apply GFPGAN face enhancement |
-| `tile_size` | int | `512` | Tile size for large image processing (0 = no tiling, max 2048) |
+| `tile_size` | int | `512` | Tile size for large images (0 = no tiling) |
+| `model` | string | `"general"` | "general", "anime", "photo" |
 
 ## GPU Requirements
 
-- **Recommended**: RTX 4090 / RTX 6000 Ada / L40S / A5000+
-- **Minimum**: Any GPU with ≥4GB VRAM
-- **CUDA**: 12.0+
-
-## Benchmark
-
-| GPU | Scale | Image Size | Face Enhance | Wall Time |
-|---|---|---|---|---|
-| RTX 4090 | 4x | 512×512 | No | ~0.5s |
-| RTX 4090 | 4x | 1920×1080 | No | ~2.1s |
-| RTX 4090 | 4x | 512×512 | Yes | ~1.2s |
-| L40S | 4x | 1920×1080 | No | ~1.8s |
-| A5000 | 4x | 1920×1080 | No | ~4.5s |
+- Minimum: >=4GB VRAM
+- Recommended: RTX 4090, L40S, A5000 (>=12GB)
+- CUDA: 12.4+
 
 ## License
 
-Apache-2.0 — Real-ESRGAN (BSD-3-Clause), GFPGAN (Apache-2.0).
+BSD-3-Clause. Based on [xinntao/Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN).

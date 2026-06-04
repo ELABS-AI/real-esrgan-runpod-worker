@@ -1,0 +1,20 @@
+[
+  {
+    "name": "4x general upscale",
+    "input": {
+      "image_url": "https://pub-796a08821c1c483aaf5e274e0d03e350.r2.dev/hub-icons/real-esrgan.svg",
+      "scale": 4,
+      "face_enhance": false,
+      "model": "general"
+    }
+  },
+  {
+    "name": "2x with face enhance",
+    "input": {
+      "image_url": "https://pub-796a08821c1c483aaf5e274e0d03e350.r2.dev/hub-icons/real-esrgan.svg",
+      "scale": 2,
+      "face_enhance": true,
+      "model": "photo"
+    }
+  }
+]
