@@ -1,7 +1,6 @@
 {
   "description": "Real-ESRGAN upscaling with multiple scale factors (2x-4x). Supports image and video frames, face enhancement, tile-based processing for large images. API: POST JSON with {image_base64, scale, face_enhance, tile_size} -> {image_base64, scale, original_size, wall_time_s}. GPU: requires >=4GB VRAM (RTX 4090, L40S, A5000+).",
   "type": "serverless",
-  "task": "upscale",
   "category": "image",
   "config": {
     "runsOn": "GPU",
