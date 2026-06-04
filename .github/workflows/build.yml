@@ -1,11 +1,4 @@
-# ──────────────────────────────────────────────────────────────────────────────
 # CI: Build & Push real-esrgan-runpod-worker to GHCR
-#
-# Triggers on push to main (Dockerfile or handler changes) and workflow_dispatch.
-# Pushes to ghcr.io/elabs-ai/elabs-server/real-esrgan-runpod:latest
-# Requires secret: GHCR_TOKEN (write:packages PAT for elabs-ai org)
-# ──────────────────────────────────────────────────────────────────────────────
-
 name: Build & Push Docker Image
 
 on:
@@ -14,7 +7,7 @@ on:
     paths:
       - Dockerfile
       - handler.py
-      - requirements-runpod.txt
+      - requirements*.txt
   workflow_dispatch:
     inputs:
       image_tag:
@@ -22,9 +15,13 @@ on:
         type: string
         default: latest
 
+permissions:
+  contents: read
+  packages: write
+
 env:
   REGISTRY: ghcr.io
-  IMAGE: ghcr.io/elabs-ai/elabs-server/real-esrgan-runpod
+  IMAGE: ghcr.io/elabs-ai/real-esrgan-runpod-worker
   TAG: ${{ inputs.image_tag || 'latest' }}
 
 jobs:
@@ -50,8 +47,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: elabs-ai
-          password: ${{ secrets.GHCR_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
