@@ -1,12 +1,14 @@
 {
-  "description": "Real-ESRGAN upscaling with multiple scale factors (2x-4x). Supports image and video frames, face enhancement, tile-based processing for large images. API: POST JSON with {image_base64, scale, face_enhance, tile_size} -> {image_base64, scale, original_size, wall_time_s}. GPU: requires >=4GB VRAM (RTX 4090, L40S, A5000+).",
-  "type": "serverless",
+  "title": "elabs / Real-ESRGAN Upscaler",
+  "description": "Real-ESRGAN image upscaling at 2x, 4x, or 8x resolution. Supports photos and anime-style images. Input: {image_b64, scale} \u2192 Output: {image_b64, original_size, output_size, wall_time_s}.",
   "category": "image",
+  "type": "serverless",
+  "iconUrl": "https://pub-796a08821c1c483aaf5e274e0d03e350.r2.dev/hub-icons/realesrgan.svg",
   "config": {
     "runsOn": "GPU",
-    "containerDiskInGb": 25,
+    "containerDiskInGb": 20,
     "gpuCount": 1,
-    "gpuIds": "ADA_24,ADA_48,AMPERE_48",
+    "gpuIds": "ADA_24,ADA_48_PRO,AMPERE_24",
     "allowedCudaVersions": [
       "12.8",
       "12.7",
@@ -20,27 +22,13 @@
     ],
     "env": [
       {
-        "key": "PYTORCH_CUDA_ALLOC_CONF",
-        "value": "expandable_segments:True"
-      }
-    ],
-    "presets": [
-      {
-        "name": "2x Upscale + Face Enhance",
-        "defaults": {
-          "ESRGAN_SCALE": "2",
-          "ESRGAN_FACE_ENHANCE": "true"
-        }
+        "key": "HF_HOME",
+        "value": "/runpod-volume/models/huggingface"
       },
       {
-        "name": "4x Upscale (No face)",
-        "defaults": {
-          "ESRGAN_SCALE": "4",
-          "ESRGAN_FACE_ENHANCE": "false"
-        }
+        "key": "DEFAULT_SCALE",
+        "value": "4"
       }
     ]
-  },
-  "title": "elabs / Real-ESRGAN Upscale",
-  "iconUrl": "https://pub-796a08821c1c483aaf5e274e0d03e350.r2.dev/hub-icons/real-esrgan.svg"
+  }
 }
