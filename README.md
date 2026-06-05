@@ -1,74 +1,86 @@
-# elabs / Real-ESRGAN Upscale
+# elabs / Real-ESRGAN Upscaler
 
-[![Deploy on RunPod](https://img.shields.io/badge/RunPod-Deploy-orange?logo=runpod)](https://console.runpod.io/hub)
-[![CUDA 12.4](https://img.shields.io/badge/CUDA-12.4-green)](https://developer.nvidia.com/cuda-toolkit)
-[![BSD-3](https://img.shields.io/badge/License-BSD%203--Clause-blue)](https://opensource.org/licenses/BSD-3-Clause)
+Real-ESRGAN image upscaling at 2x, 4x, or 8x. Works on photos, illustrations, and anime-style images.
 
-**AI-powered image upscaling** using Real-ESRGAN. Upscale images 2x-4x with optional face enhancement (GFPGAN). Tile-based processing handles images of any size.
+[![Docker Build](https://github.com/ELABS-AI/real-esrgan-runpod-worker/actions/workflows/build.yml/badge.svg)](https://github.com/ELABS-AI/real-esrgan-runpod-worker/actions/workflows/build.yml)
 
-![Real-ESRGAN Upscale](https://pub-796a08821c1c483aaf5e274e0d03e350.r2.dev/hub-icons/real-esrgan.svg)
-
-## Highlights
-
-- 2x-4x upscaling -- crisp, detail-preserving enhancement
-- Face enhancement -- optional GFPGAN face restoration
-- Tile processing -- handles large images (4K+) without OOM
-- Multiple models -- General, Anime, Photo variants
-- Fast -- ~1-3s per 512x512 tile on RTX 4090
+---
 
 ## Quick Start
 
-```bash
-curl -X POST https://api.runpod.ai/v2/{ENDPOINT_ID}/run \
-  -H "Authorization: Bearer $RUNPOD_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"input": {"image_base64": "<base64 PNG>", "scale": 4, "face_enhance": false}}'
+Deploy this worker on [RunPod Serverless](https://www.runpod.io/serverless) using the **Deploy on RunPod** button in the Hub, or manually with the Docker image:
+
+```
+ghcr.io/elabs-ai/real-esrgan-runpod-worker:latest
 ```
 
-## API
+---
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DEFAULT_SCALE` | `4` | Default upscale factor (2, 4, or 8) |
+| `HF_HOME` | `/runpod-volume/models/huggingface` | HuggingFace cache directory |
+| `HUGGINGFACE_HUB_CACHE` | `/runpod-volume/models/huggingface/hub` | HuggingFace hub cache |
+
+> **Note:** `HF_HOME` and `HUGGINGFACE_HUB_CACHE` should point to a RunPod Network Volume mount path for model caching between runs.
+
+---
+
+## API Reference
 
 ### Input
 
 ```json
-{
-  "input": {
-    "image_base64": "<base64 PNG or JPG>",
-    "scale": 4,
-    "face_enhance": false,
-    "tile_size": 512,
-    "model": "general"
-  }
-}
+{"input": {"image_b64": "<base64 PNG/JPG>", "scale": 4}}
 ```
 
 ### Output
 
 ```json
-{
-  "image_base64": "<base64 upscaled PNG>",
-  "scale": 4,
-  "original_size": [640, 480],
-  "output_size": [2560, 1920],
-  "wall_time_s": 2.1
-}
+{"image_b64": "<base64 PNG>", "original_size": [512, 512], "output_size": [2048, 2048], "wall_time_s": 2.1}
 ```
 
-### Parameters
+---
 
-| Parameter | Type | Default | Description |
-|---|---|---|---|
-| `image_base64` | string | required | Base64 PNG/JPG to upscale |
-| `scale` | int | `4` | Upscale factor: 2 or 4 |
-| `face_enhance` | bool | `false` | Apply GFPGAN face enhancement |
-| `tile_size` | int | `512` | Tile size for large images (0 = no tiling) |
-| `model` | string | `"general"` | "general", "anime", "photo" |
+## Usage Examples
+
+### Python (runpod SDK)
+
+```python
+import runpod
+import base64
+
+client = runpod.AsyncioEndpointClient("real-esrgan-runpod-worker")
+result = await client.run({"input": {"image_b64": "<base64 PNG/JPG>", "scale": 4}})
+print(result)
+```
+
+### cURL
+
+```bash
+curl -X POST https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/run \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"input": {"image_b64": "<base64 PNG/JPG>", "scale": 4}}'
+
+```
+
+---
 
 ## GPU Requirements
 
-- Minimum: >=4GB VRAM
-- Recommended: RTX 4090, L40S, A5000 (>=12GB)
-- CUDA: 12.4+
+RTX 3090+ (24GB VRAM) | ~1-5s per image | BSD-3 license
+
+---
 
 ## License
 
-BSD-3-Clause. Based on [xinntao/Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN).
+Apache 2.0 — See [LICENSE](LICENSE)
+
+---
+
+## Built by [E-Labs AI](https://www.elabsai.com)
+
+Part of the E-Labs AI Studio serverless model fleet. Visit [elabsai.com](https://www.elabsai.com) to use these models in a hosted UI.
